@@ -87,18 +87,10 @@ func (d OtelMarshaler) Unmarshal(amqpMsg amqp.Delivery) (*message.Message, error
 	msg := message.NewMessage(msgUUIDStr, amqpMsg.Body)
 	msg.Metadata = make(message.Metadata, len(amqpMsg.Headers)-1) // headers - minus uuid
 
-	// unmarshal otel trace metadata
-	traceID, traceErr := trace.TraceIDFromHex(amqpMsg.Headers["trace_id"].(string))
-	spanID, spanErr := trace.SpanIDFromHex(amqpMsg.Headers["span_id"].(string))
-	if traceErr != nil || spanErr != nil {
-		sc := trace.NewSpanContext(trace.SpanContextConfig{
-			TraceID:    traceID,
-			SpanID:     spanID,
-			TraceFlags: 0,
-			Remote:     false,
-		})
-		ctx := trace.ContextWithSpanContext(msg.Context(), sc)
-		msg.SetContext(ctx)
+	// unmarshal otel trace to metadata
+	if amqpMsg.Headers["trace_id"] != nil && amqpMsg.Headers["span_id"] != nil {
+		msg.Metadata.Set("trace_id", amqpMsg.Headers["trace_id"].(string))
+		msg.Metadata.Set("span_id", amqpMsg.Headers["span_id"].(string))
 	}
 
 	for key, value := range amqpMsg.Headers {
