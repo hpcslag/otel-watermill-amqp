@@ -6,7 +6,16 @@ In a scenario like CQRS, the command is sent asynchronously, and there is no way
 
 ## Install
 
+```
+go get -u github.com/hpcslag/otel-watermill-amqp
+```
+
 ``` go
+
+import (
+    watermillotelamqp "github.com/hpcslag/otel-watermill-amqp"
+)
+
 // DSN
 amqpAddress := fmt.Sprintf("amqp://%s:%s@%s:%s/%s", .... )
 
