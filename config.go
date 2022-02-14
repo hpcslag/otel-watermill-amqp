@@ -1,4 +1,4 @@
-package watermillotelamqp
+package otelwatermillamqp
 
 import "github.com/ThreeDotsLabs/watermill-amqp/pkg/amqp"
 
